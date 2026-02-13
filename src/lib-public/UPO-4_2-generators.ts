@@ -4,11 +4,12 @@ import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { generateStyle } from '../shared/PDF-functions';
 import { generateNaglowekUPO } from './generators/UPO4_2/Naglowek';
 import { generateDokumnetUPO } from './generators/UPO4_2/Dokumenty';
-import { parseXML } from '../shared/XML-parser';
+import { parseXML, parseXMLFromString } from '../shared/XML-parser';
 import { Position } from '../shared/enums/common.enum';
 
-export async function generatePDFUPO(file: File): Promise<Blob> {
-  const upo = (await parseXML(file)) as Upo;
+export async function generatePDFUPO(file: File | string): Promise<Blob> {
+  const upo = await parseUpo(file);
+
   const docDefinition: TDocumentDefinitions = {
     content: [generateNaglowekUPO(upo.Potwierdzenie!), generateDokumnetUPO(upo.Potwierdzenie!)],
     ...generateStyle(),
@@ -32,4 +33,12 @@ export async function generatePDFUPO(file: File): Promise<Blob> {
       }
     });
   });
+
+  async function parseUpo(file: File | string): Promise<Upo> {
+    if (typeof file === 'string') {
+      return (await parseXMLFromString(file)) as Upo;
+    } else {
+      return (await parseXML(file)) as Upo;
+    }
+  }
 }
