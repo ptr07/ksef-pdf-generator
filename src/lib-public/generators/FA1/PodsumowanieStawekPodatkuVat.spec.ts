@@ -79,17 +79,18 @@ describe('getSummaryTaxRate', () => {
       gross: '123.00',
     });
     expect(summary[1].taxRateString).toBe('8% lub 7%');
+    expect(summary[3].taxRateString).toBe('4% lub 3%');
     expect(summary[4].taxRateString).toBe('');
     expect(summary[5].taxRateString).toBe('zwolnione z opodatkowania');
   });
 
-  it('includes only tax rates with non-zero values', () => {
+  it('includes tax rates with zero values', () => {
     const fa: Fa = {
       P_13_1: { _text: '0' },
       P_14_1: { _text: '0' },
       P_14_1W: { _text: '0' },
     };
 
-    expect(getSummaryTaxRate(fa)).toHaveLength(0);
+    expect(getSummaryTaxRate(fa)).toHaveLength(1);
   });
 });
